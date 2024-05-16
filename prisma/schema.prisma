@@ -1,0 +1,54 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Admin {
+    id    Int     @id @default(autoincrement())
+    name  String
+    email String  @unique
+    Skill Skill[]
+
+    @@map("admin")
+}
+
+model User {
+    id        Int         @id @default(autoincrement())
+    name      String
+    email     String      @unique
+    UserSkill UserSkill[]
+
+    @@map("user")
+}
+
+model Skill {
+    id         Int         @id @default(autoincrement())
+    name       String      @unique
+    skill_type game_type
+    adminId    Int
+    admin      Admin       @relation(fields: [adminId], references: [id])
+    UserSkill  UserSkill[]
+
+    @@map("skill")
+}
+
+model UserSkill {
+    id      Int @id @default(autoincrement())
+    userId  Int
+    skillId Int
+
+    level Int
+    user  User  @relation(fields: [userId], references: [id])
+    skill Skill @relation(fields: [skillId], references: [id])
+
+    @@map("user_skill")
+}
+
+enum game_type {
+    digital
+    physical
+}
